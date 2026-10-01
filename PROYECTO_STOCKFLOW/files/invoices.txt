@@ -1,0 +1,1 @@
+{"invoice_id": 1, "sale_id": 1, "client_id": 3, "client_name": "andres", "product_id": 1, "product_name": "iphone 17 pro max", "quantity": 2, "unit_price": 3400000.0, "subtotal": 6800000.0, "tax": 0.0, "total": 6800000.0, "date": "2026-10-01", "time": "01:50:44", "payment_method": "Efectivo", "status": "Pagada"}

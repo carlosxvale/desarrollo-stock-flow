@@ -1,0 +1,79 @@
+{"date_time": "2026-10-01T01:39:28-05:00", "user": "Anónimo", "role": "public", "action": "Consulta", "method": "GET", "path": "/login", "status": 200, "details": {}}
+{"date_time": "2026-10-01T01:39:28-05:00", "user": "empleado", "role": "employee", "action": "Intento de inicio de sesión", "method": "POST", "path": "/login", "status": 302, "details": {"role": "employee", "username": "empleado"}}
+{"date_time": "2026-10-01T01:39:28-05:00", "user": "empleado", "role": "employee", "action": "Consulta", "method": "GET", "path": "/inventory", "status": 200, "details": {}}
+{"date_time": "2026-10-01T01:39:28-05:00", "user": "empleado", "role": "employee", "action": "Consulta", "method": "GET", "path": "/inventory", "status": 200, "details": {}}
+{"date_time": "2026-10-01T01:39:28-05:00", "user": "empleado", "role": "employee", "action": "Consulta", "method": "GET", "path": "/dashboard", "status": 403, "details": {}}
+{"date_time": "2026-10-01T01:39:28-05:00", "user": "empleado", "role": "employee", "action": "Consulta", "method": "GET", "path": "/suppliers", "status": 403, "details": {}}
+{"date_time": "2026-10-01T01:39:28-05:00", "user": "empleado", "role": "employee", "action": "Consulta", "method": "GET", "path": "/history", "status": 403, "details": {}}
+{"date_time": "2026-10-01T01:39:28-05:00", "user": "admin", "role": "admin", "action": "Intento de inicio de sesión", "method": "POST", "path": "/login", "status": 302, "details": {"role": "admin", "username": "admin"}}
+{"date_time": "2026-10-01T01:39:28-05:00", "user": "admin", "role": "admin", "action": "Consulta", "method": "GET", "path": "/dashboard", "status": 200, "details": {}}
+{"date_time": "2026-10-01T01:39:28-05:00", "user": "admin", "role": "admin", "action": "Consulta", "method": "GET", "path": "/history", "status": 200, "details": {}}
+{"date_time": "2026-10-01T01:40:12-05:00", "user": "Anónimo", "role": "public", "action": "Consulta", "method": "GET", "path": "/", "status": 200, "details": {}}
+{"date_time": "2026-10-01T01:40:24-05:00", "user": "Anónimo", "role": "public", "action": "Consulta", "method": "GET", "path": "/login", "status": 200, "details": {}}
+{"date_time": "2026-10-01T01:41:09-05:00", "user": "admin", "role": "admin", "action": "Intento de inicio de sesión", "method": "POST", "path": "/login", "status": 302, "details": {"role": "admin", "username": "admin"}}
+{"date_time": "2026-10-01T01:41:09-05:00", "user": "admin", "role": "admin", "action": "Consulta", "method": "GET", "path": "/dashboard", "status": 200, "details": {}}
+{"date_time": "2026-10-01T01:41:09-05:00", "user": "admin", "role": "admin", "action": "Consulta", "method": "GET", "path": "/api/dashboard-data", "status": 200, "details": {}}
+{"date_time": "2026-10-01T01:41:24-05:00", "user": "admin", "role": "admin", "action": "Consulta", "method": "GET", "path": "/history", "status": 200, "details": {}}
+{"date_time": "2026-10-01T01:41:46-05:00", "user": "admin", "role": "admin", "action": "Consulta", "method": "GET", "path": "/suppliers", "status": 200, "details": {}}
+{"date_time": "2026-10-01T01:41:46-05:00", "user": "admin", "role": "admin", "action": "Consulta", "method": "GET", "path": "/api/suppliers", "status": 200, "details": {}}
+{"date_time": "2026-10-01T01:41:51-05:00", "user": "admin", "role": "admin", "action": "Consulta", "method": "GET", "path": "/history", "status": 200, "details": {}}
+{"date_time": "2026-10-01T01:42:18-05:00", "user": "admin", "role": "admin", "action": "Cierre de sesión", "method": "GET", "path": "/logout", "status": 302, "details": {}}
+{"date_time": "2026-10-01T01:42:18-05:00", "user": "Anónimo", "role": "public", "action": "Consulta", "method": "GET", "path": "/", "status": 200, "details": {}}
+{"date_time": "2026-10-01T01:42:22-05:00", "user": "Anónimo", "role": "public", "action": "Consulta", "method": "GET", "path": "/login", "status": 200, "details": {}}
+{"date_time": "2026-10-01T01:42:44-05:00", "user": "empleado", "role": "employee", "action": "Intento de inicio de sesión", "method": "POST", "path": "/login", "status": 302, "details": {"role": "employee", "username": "empleado"}}
+{"date_time": "2026-10-01T01:42:44-05:00", "user": "empleado", "role": "employee", "action": "Consulta", "method": "GET", "path": "/inventory", "status": 200, "details": {}}
+{"date_time": "2026-10-01T01:42:45-05:00", "user": "empleado", "role": "employee", "action": "Consulta", "method": "GET", "path": "/api/inventory", "status": 200, "details": {}}
+{"date_time": "2026-10-01T01:42:51-05:00", "user": "empleado", "role": "employee", "action": "Consulta", "method": "GET", "path": "/sales", "status": 200, "details": {}}
+{"date_time": "2026-10-01T01:42:51-05:00", "user": "empleado", "role": "employee", "action": "Consulta", "method": "GET", "path": "/api/sales", "status": 200, "details": {}}
+{"date_time": "2026-10-01T01:42:56-05:00", "user": "empleado", "role": "employee", "action": "Consulta", "method": "GET", "path": "/inventory", "status": 200, "details": {}}
+{"date_time": "2026-10-01T01:42:56-05:00", "user": "empleado", "role": "employee", "action": "Consulta", "method": "GET", "path": "/api/inventory", "status": 200, "details": {}}
+{"date_time": "2026-10-01T01:43:02-05:00", "user": "empleado", "role": "employee", "action": "Consulta", "method": "GET", "path": "/clients", "status": 200, "details": {}}
+{"date_time": "2026-10-01T01:43:03-05:00", "user": "empleado", "role": "employee", "action": "Consulta", "method": "GET", "path": "/api/clients", "status": 200, "details": {}}
+{"date_time": "2026-10-01T01:43:08-05:00", "user": "empleado", "role": "employee", "action": "Consulta", "method": "GET", "path": "/expenses", "status": 200, "details": {}}
+{"date_time": "2026-10-01T01:43:08-05:00", "user": "empleado", "role": "employee", "action": "Consulta", "method": "GET", "path": "/api/expenses", "status": 200, "details": {}}
+{"date_time": "2026-10-01T01:43:34-05:00", "user": "empleado", "role": "employee", "action": "Cierre de sesión", "method": "GET", "path": "/logout", "status": 302, "details": {}}
+{"date_time": "2026-10-01T01:43:34-05:00", "user": "empleado", "role": "employee", "action": "Consulta", "method": "GET", "path": "/login", "status": 200, "details": {}}
+{"date_time": "2026-10-01T01:43:48-05:00", "user": "admin", "role": "admin", "action": "Intento de inicio de sesión", "method": "POST", "path": "/login", "status": 302, "details": {"role": "admin", "username": "admin"}}
+{"date_time": "2026-10-01T01:43:48-05:00", "user": "admin", "role": "admin", "action": "Consulta", "method": "GET", "path": "/dashboard", "status": 200, "details": {}}
+{"date_time": "2026-10-01T01:43:48-05:00", "user": "admin", "role": "admin", "action": "Consulta", "method": "GET", "path": "/api/dashboard-data", "status": 200, "details": {}}
+{"date_time": "2026-10-01T01:43:51-05:00", "user": "admin", "role": "admin", "action": "Consulta", "method": "GET", "path": "/inventory", "status": 200, "details": {}}
+{"date_time": "2026-10-01T01:43:51-05:00", "user": "admin", "role": "admin", "action": "Consulta", "method": "GET", "path": "/api/inventory", "status": 200, "details": {}}
+{"date_time": "2026-10-01T01:44:07-05:00", "user": "admin", "role": "admin", "action": "Actualización", "method": "PUT", "path": "/api/inventory/1", "status": 200, "details": {"quantity": 1540000}}
+{"date_time": "2026-10-01T01:44:07-05:00", "user": "admin", "role": "admin", "action": "Consulta", "method": "GET", "path": "/api/inventory", "status": 200, "details": {}}
+{"date_time": "2026-10-01T01:44:27-05:00", "user": "admin", "role": "admin", "action": "Actualización", "method": "PUT", "path": "/api/inventory/1", "status": 200, "details": {"quantity": 5}}
+{"date_time": "2026-10-01T01:44:27-05:00", "user": "admin", "role": "admin", "action": "Consulta", "method": "GET", "path": "/api/inventory", "status": 200, "details": {}}
+{"date_time": "2026-10-01T01:44:41-05:00", "user": "admin", "role": "admin", "action": "Intento de inicio de sesión", "method": "POST", "path": "/login", "status": 302, "details": {"role": "admin", "username": "admin"}}
+{"date_time": "2026-10-01T01:44:41-05:00", "user": "admin", "role": "admin", "action": "Consulta", "method": "GET", "path": "/dashboard", "status": 200, "details": {}}
+{"date_time": "2026-10-01T01:44:41-05:00", "user": "admin", "role": "admin", "action": "Consulta", "method": "GET", "path": "/inventory", "status": 200, "details": {}}
+{"date_time": "2026-10-01T01:45:27-05:00", "user": "admin", "role": "admin", "action": "Cierre de sesión", "method": "GET", "path": "/logout", "status": 302, "details": {}}
+{"date_time": "2026-10-01T01:45:27-05:00", "user": "Anónimo", "role": "public", "action": "Consulta", "method": "GET", "path": "/", "status": 200, "details": {}}
+{"date_time": "2026-10-01T01:46:09-05:00", "user": "Anónimo", "role": "public", "action": "Consulta", "method": "GET", "path": "/", "status": 200, "details": {}}
+{"date_time": "2026-10-01T01:46:13-05:00", "user": "Anónimo", "role": "public", "action": "Consulta", "method": "GET", "path": "/login", "status": 200, "details": {}}
+{"date_time": "2026-10-01T01:46:17-05:00", "user": "admin", "role": "admin", "action": "Intento de inicio de sesión", "method": "POST", "path": "/login", "status": 302, "details": {"role": "admin", "username": "admin"}}
+{"date_time": "2026-10-01T01:46:17-05:00", "user": "admin", "role": "admin", "action": "Consulta", "method": "GET", "path": "/dashboard", "status": 200, "details": {}}
+{"date_time": "2026-10-01T01:46:17-05:00", "user": "admin", "role": "admin", "action": "Consulta", "method": "GET", "path": "/api/dashboard-data", "status": 200, "details": {}}
+{"date_time": "2026-10-01T01:46:37-05:00", "user": "admin", "role": "admin", "action": "Consulta", "method": "GET", "path": "/history", "status": 200, "details": {}}
+{"date_time": "2026-10-01T01:46:48-05:00", "user": "admin", "role": "admin", "action": "Intento de inicio de sesión", "method": "POST", "path": "/login", "status": 302, "details": {"role": "admin", "username": "admin"}}
+{"date_time": "2026-10-01T01:46:48-05:00", "user": "admin", "role": "admin", "action": "Consulta", "method": "GET", "path": "/dashboard", "status": 200, "details": {}}
+{"date_time": "2026-10-01T01:46:48-05:00", "user": "admin", "role": "admin", "action": "Consulta", "method": "GET", "path": "/inventory", "status": 200, "details": {}}
+{"date_time": "2026-10-01T01:49:14-05:00", "user": "admin", "role": "admin", "action": "Consulta", "method": "GET", "path": "/clients", "status": 200, "details": {}}
+{"date_time": "2026-10-01T01:49:14-05:00", "user": "admin", "role": "admin", "action": "Consulta", "method": "GET", "path": "/api/clients", "status": 200, "details": {}}
+{"date_time": "2026-10-01T01:49:32-05:00", "user": "admin", "role": "admin", "action": "Consulta", "method": "GET", "path": "/suppliers", "status": 200, "details": {}}
+{"date_time": "2026-10-01T01:49:32-05:00", "user": "admin", "role": "admin", "action": "Consulta", "method": "GET", "path": "/api/suppliers", "status": 200, "details": {}}
+{"date_time": "2026-10-01T01:49:36-05:00", "user": "admin", "role": "admin", "action": "Consulta", "method": "GET", "path": "/inventory", "status": 200, "details": {}}
+{"date_time": "2026-10-01T01:49:36-05:00", "user": "admin", "role": "admin", "action": "Consulta", "method": "GET", "path": "/api/inventory", "status": 200, "details": {}}
+{"date_time": "2026-10-01T01:49:51-05:00", "user": "admin", "role": "admin", "action": "Actualización", "method": "PUT", "path": "/api/inventory/1", "status": 200, "details": {"price": 3400000, "quantity": 5}}
+{"date_time": "2026-10-01T01:49:51-05:00", "user": "admin", "role": "admin", "action": "Consulta", "method": "GET", "path": "/api/inventory", "status": 200, "details": {}}
+{"date_time": "2026-10-01T01:49:57-05:00", "user": "admin", "role": "admin", "action": "Consulta", "method": "GET", "path": "/sales", "status": 200, "details": {}}
+{"date_time": "2026-10-01T01:49:58-05:00", "user": "admin", "role": "admin", "action": "Consulta", "method": "GET", "path": "/api/sales", "status": 200, "details": {}}
+{"date_time": "2026-10-01T01:50:29-05:00", "user": "admin", "role": "admin", "action": "Consulta", "method": "GET", "path": "/api/inventory/1", "status": 200, "details": {}}
+{"date_time": "2026-10-01T01:50:44-05:00", "user": "admin", "role": "admin", "action": "Registro o acción", "method": "POST", "path": "/api/sales", "status": 201, "details": {"client_id": 3, "client_name": "andres", "product_id": 1, "product_name": "iphone 17 pro max", "quantity": 2, "unit_price": 3400000.0, "total": 6800000.0, "payment_method": "Efectivo", "id": 1, "date": "2026-10-01"}}
+{"date_time": "2026-10-01T01:50:44-05:00", "user": "admin", "role": "admin", "action": "Consulta", "method": "GET", "path": "/api/sales", "status": 200, "details": {}}
+{"date_time": "2026-10-01T01:51:02-05:00", "user": "admin", "role": "admin", "action": "Consulta", "method": "GET", "path": "/invoices", "status": 200, "details": {}}
+{"date_time": "2026-10-01T01:51:02-05:00", "user": "admin", "role": "admin", "action": "Consulta", "method": "GET", "path": "/api/invoices", "status": 200, "details": {}}
+{"date_time": "2026-10-01T01:51:05-05:00", "user": "admin", "role": "admin", "action": "Consulta", "method": "GET", "path": "/api/invoices/1", "status": 200, "details": {}}
+{"date_time": "2026-10-01T01:52:06-05:00", "user": "admin", "role": "admin", "action": "Consulta", "method": "GET", "path": "/invoices", "status": 200, "details": {}}
+{"date_time": "2026-10-01T01:52:07-05:00", "user": "admin", "role": "admin", "action": "Consulta", "method": "GET", "path": "/api/invoices", "status": 200, "details": {}}
+{"date_time": "2026-10-01T01:52:10-05:00", "user": "admin", "role": "admin", "action": "Consulta", "method": "GET", "path": "/api/invoices/1", "status": 200, "details": {}}
+{"date_time": "2026-10-01T01:52:16-05:00", "user": "admin", "role": "admin", "action": "Consulta", "method": "GET", "path": "/invoices", "status": 200, "details": {}}
+{"date_time": "2026-10-01T01:52:16-05:00", "user": "admin", "role": "admin", "action": "Consulta", "method": "GET", "path": "/api/invoices", "status": 200, "details": {}}

@@ -1,0 +1,154 @@
+{% extends "base.html" %}
+
+{% block title %}Clientes - STOCKFLOW{% endblock %}
+
+{% block content %}
+<div class="container-lg">
+    <div class="row mb-4">
+        <div class="col-md-6">
+            <h1 class="display-5 text-primary fw-bold">
+                <i class="fas fa-users"></i> Gestión de Clientes
+            </h1>
+        </div>
+        <div class="col-md-6 text-end">
+            <button class="btn btn-primary btn-lg" type="button" onclick="openFormModal('clientModal')">
+                <i class="fas fa-user-plus"></i> Nuevo Cliente
+            </button>
+        </div>
+    </div>
+
+    <div class="card shadow">
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-striped table-hover" id="clientsTable">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>ID</th>
+                            <th>Nombre</th>
+                            <th>Apellido</th>
+                            <th>Email</th>
+                            <th>Teléfono</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody id="clientsTableBody">
+                        <tr>
+                            <td colspan="6" class="text-center text-muted">Cargando...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal para agregar cliente -->
+<div class="modal fade" id="clientModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-primary text-white">
+                <h5 class="modal-title"><i class="fas fa-user-plus"></i> Nuevo Cliente</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <form id="clientForm">
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="clientName" class="form-label">Nombre</label>
+                        <input type="text" class="form-control" id="clientName" placeholder="Juan" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="clientLastName" class="form-label">Apellido</label>
+                        <input type="text" class="form-control" id="clientLastName" placeholder="Pérez" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="clientEmail" class="form-label">Email</label>
+                        <input type="email" class="form-control" id="clientEmail" placeholder="juan@example.com" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="clientPhone" class="form-label">Teléfono</label>
+                        <input type="tel" class="form-control" id="clientPhone" placeholder="3001234567" required>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-primary">Guardar Cliente</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+<script>
+    const canDeleteRecords = {{ 'true' if session.get('role') == 'admin' else 'false' }};
+
+    // Cargar clientes
+    async function loadClients() {
+        try {
+            const response = await axios.get('/api/clients');
+            const tableBody = document.getElementById('clientsTableBody');
+            
+            if (response.data.length === 0) {
+                tableBody.innerHTML = '<tr><td colspan="6" class="text-center text-muted">No hay clientes registrados</td></tr>';
+                return;
+            }
+            
+            tableBody.innerHTML = response.data.map(client => `
+                <tr>
+                    <td><strong>${client.id}</strong></td>
+                    <td>${client.name ?? '-'}</td>
+                    <td>${client.last_name ?? '-'}</td>
+                    <td>${client.email || '-'}</td>
+                    <td>${client.cellphone ?? client.phone ?? '-'}</td>
+                    <td>
+                        ${canDeleteRecords ? `
+                        <button class="btn btn-sm btn-danger" onclick="deleteClient(${client.id})">
+                            <i class="fas fa-trash"></i> Eliminar
+                        </button>
+                        ` : ''}
+                    </td>
+                </tr>
+            `).join('');
+        } catch (error) {
+            console.error('Error cargando clientes:', error);
+        }
+    }
+
+    // Agregar cliente
+    document.getElementById('clientForm').addEventListener('submit', (e) => {
+        const phoneValue = document.getElementById('clientPhone').value.trim();
+        const data = {
+            name: document.getElementById('clientName').value.trim(),
+            last_name: document.getElementById('clientLastName').value.trim(),
+            email: document.getElementById('clientEmail').value.trim(),
+            cellphone: phoneValue || ''
+        };
+        
+        submitModalForm(e, {
+            modalId: 'clientModal',
+            submit: () => axios.post('/api/clients', data),
+            onSuccess: loadClients,
+            successMessage: 'Cliente registrado exitosamente',
+            errorMessage: 'Error al registrar cliente'
+        });
+    });
+
+    // Eliminar cliente
+    async function deleteClient(clientId) {
+        if (confirm('¿Estás seguro que deseas eliminar este cliente?')) {
+            try {
+                await axios.delete(`/api/clients/${clientId}`);
+                alert('Cliente eliminado');
+                loadClients();
+            } catch (error) {
+                alert('Error al eliminar cliente');
+            }
+        }
+    }
+
+    // Cargar al iniciar
+    document.addEventListener('DOMContentLoaded', loadClients);
+</script>
+{% endblock %}

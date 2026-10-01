@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+
+{% block title %}STOCKFLOW | Inicio{% endblock %}
+
+{% block content %}
+<section class="public-hero" aria-labelledby="public-title">
+    <img class="public-hero-image" src="https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=2200&q=85" alt="Espacio de trabajo digital con herramientas de análisis empresarial" fetchpriority="high">
+    <div class="public-hero-shade"></div>
+    <div class="public-hero-content">
+        <p class="public-eyebrow"><span></span> STOCKFLOW</p>
+        <h1 id="public-title">Control claro.<br>Negocio en marcha.</h1>
+        <p>Ventas, inventario y finanzas de tu negocio, reunidos en un solo lugar.</p>
+        <a class="public-primary-link" href="{{ url_for('login') }}">Entrar al panel <i class="fa-solid fa-arrow-right"></i></a>
+    </div>
+    <a class="public-scroll-cue" href="#funciones" aria-label="Ver más"><span></span> DESCUBRIR</a>
+    <div class="public-hero-index">01 <span>/</span> 02</div>
+</section>
+
+<section class="public-intro" id="funciones" aria-labelledby="intro-title">
+    <div class="public-intro-heading">
+        <p class="public-eyebrow"><span></span> Todo en una vista</p>
+        <h2 id="intro-title">El control de tu negocio.</h2>
+        <p>Una herramienta para organizar la operación diaria y tomar decisiones con información clara.</p>
+    </div>
+    <div class="public-feature-grid">
+        <article class="public-feature">
+            <span class="public-feature-number">01</span>
+            <i class="fa-solid fa-boxes-stacked" aria-hidden="true"></i>
+            <h3>Inventario</h3>
+            <p>Consulta existencias y mantén tus productos al día.</p>
+        </article>
+        <article class="public-feature">
+            <span class="public-feature-number">02</span>
+            <i class="fa-solid fa-receipt" aria-hidden="true"></i>
+            <h3>Ventas y facturas</h3>
+            <p>Registra operaciones y encuentra sus comprobantes.</p>
+        </article>
+        <article class="public-feature">
+            <span class="public-feature-number">03</span>
+            <i class="fa-solid fa-chart-pie" aria-hidden="true"></i>
+            <h3>Resumen del negocio</h3>
+            <p>Revisa ingresos, gastos y actividad desde el panel.</p>
+        </article>
+    </div>
+    <a class="public-text-link" href="{{ url_for('login') }}">Acceso al sistema <i class="fa-solid fa-arrow-right"></i></a>
+</section>
+{% endblock %}

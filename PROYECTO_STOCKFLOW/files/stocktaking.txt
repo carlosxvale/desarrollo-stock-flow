@@ -1,0 +1,2 @@
+{"name": "iphone 17 pro max", "quantity": 3, "id": 1, "price": 3400000}
+{"name": "titan x", "quantity": 0, "price": 200000.0, "id": 2}

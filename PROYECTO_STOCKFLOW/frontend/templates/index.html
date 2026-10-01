@@ -1,0 +1,547 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard - STOCKFLOW{% endblock %}
+
+{% block content %}
+<div class="container-lg">
+    <section class="hero-section text-center mb-5">
+        <h1 class="hero-title">
+            <i class="fas fa-chart-line me-2"></i>Dashboard Profesional
+        </h1>
+        <p class="hero-welcome">
+            <span>¡Bienvenido de nuevo,</span> <strong>{{ admin_user }}</strong>
+        </p>
+        <p class="hero-subtitle mx-auto">
+            Visualiza tus principales indicadores de negocio con un diseño oscuro elegante, enfocado en claridad y datos relevantes.
+        </p>
+    </section>
+
+    <div class="slide-panel d-none d-xl-flex">
+        <div class="panel-title">Panel Premium</div>
+        <h5>Control de Plataforma</h5>
+        <div class="panel-stat">
+            <span>Visión 24/7</span>
+            <strong>Activo</strong>
+        </div>
+        <div class="panel-stat">
+            <span>Procesos Optim</span>
+            <strong>+18.4%</strong>
+        </div>
+        <div class="panel-item">
+            <span><i class="fas fa-shield-alt"></i> Seguridad</span>
+            <p>Protección avanzada y acceso seguro en tiempo real.</p>
+        </div>
+        <div class="panel-item">
+            <span><i class="fas fa-meteor"></i> Flujo</span>
+            <p>Operaciones fluidas con inteligencia visual y datos claros.</p>
+        </div>
+    </div>
+
+    <!-- TARJETAS DE CONTADORES -->
+    <div class="row g-4 mb-5">
+        <div class="col-md-4 col-lg-2">
+            <div class="card bg-primary text-white shadow h-100">
+                <div class="card-body text-center">
+                    <i class="fas fa-users fa-2x mb-3"></i>
+                    <h5 class="card-title">Clientes</h5>
+                    <p class="display-6 fw-bold">{{ clients }}</p>
+                    <a href="/clients" class="btn btn-light btn-sm mt-2">Ver</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4 col-lg-2">
+            <div class="card bg-success text-white shadow h-100">
+                <div class="card-body text-center">
+                    <i class="fas fa-handshake fa-2x mb-3"></i>
+                    <h5 class="card-title">Proveedores</h5>
+                    <p class="display-6 fw-bold">{{ suppliers }}</p>
+                    <a href="/suppliers" class="btn btn-light btn-sm mt-2">Ver</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4 col-lg-2">
+            <div class="card bg-warning text-white shadow h-100">
+                <div class="card-body text-center">
+                    <i class="fas fa-shopping-cart fa-2x mb-3"></i>
+                    <h5 class="card-title">Ventas</h5>
+                    <p class="display-6 fw-bold">{{ sales }}</p>
+                    <a href="/sales" class="btn btn-light btn-sm mt-2">Ver</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4 col-lg-2">
+            <div class="card bg-danger text-white shadow h-100">
+                <div class="card-body text-center">
+                    <i class="fas fa-dolly fa-2x mb-3"></i>
+                    <h5 class="card-title">Compras</h5>
+                    <p class="display-6 fw-bold">{{ buys }}</p>
+                    <a href="/purchases" class="btn btn-light btn-sm mt-2">Ver</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4 col-lg-2">
+            <div class="card bg-info text-white shadow h-100">
+                <div class="card-body text-center">
+                    <i class="fas fa-boxes fa-2x mb-3"></i>
+                    <h5 class="card-title">Inventario</h5>
+                    <p class="display-6 fw-bold">{{ stock }}</p>
+                    <a href="/inventory" class="btn btn-light btn-sm mt-2">Ver</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4 col-lg-2">
+            <div class="card bg-danger text-white shadow h-100">
+                <div class="card-body text-center">
+                    <i class="fas fa-receipt fa-2x mb-3"></i>
+                    <h5 class="card-title">Gastos</h5>
+                    <p class="display-6 fw-bold">{{ expenses }}</p>
+                    <a href="/expenses" class="btn btn-light btn-sm mt-2">Ver</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- RESUMEN FINANCIERO -->
+    <div class="row g-4 mb-5">
+        <div class="col-lg-3">
+            <div class="card border-success shadow h-100">
+                <div class="card-body">
+                    <h6 class="text-muted mb-2"><i class="fas fa-arrow-up text-success"></i> Total Ventas</h6>
+                    <h3 class="text-success fw-bold">$<span id="totalSales">0</span></h3>
+                    <small class="text-muted">Todas las ventas registradas</small>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-3">
+            <div class="card border-danger shadow h-100">
+                <div class="card-body">
+                    <h6 class="text-muted mb-2"><i class="fas fa-arrow-down text-danger"></i> Total Gastos</h6>
+                    <h3 class="text-danger fw-bold">$<span id="totalExpenses">0</span></h3>
+                    <small class="text-muted">Todos los gastos registrados</small>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-3">
+            <div class="card border-primary shadow h-100">
+                <div class="card-body">
+                    <h6 class="text-muted mb-2"><i class="fas fa-balance-scale text-primary"></i> Balance Neto</h6>
+                    <h3 class="text-primary fw-bold">$<span id="netBalance">0</span></h3>
+                    <small class="text-muted">Ventas - Gastos</small>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-3">
+            <div class="card border-warning shadow h-100">
+                <div class="card-body">
+                    <h6 class="text-muted mb-2"><i class="fas fa-bullseye text-warning"></i> Meta Mensual</h6>
+                    <div class="input-group">
+                        <input type="number" id="monthlySalesGoal" class="form-control form-control-sm" placeholder="Ej: 500000" value="500000">
+                        <button class="btn btn-outline-warning btn-sm" onclick="updateGoal()">Set</button>
+                    </div>
+                    <small class="text-muted mt-2">Progreso: <span id="goalProgress">0</span>%</small>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- GRÁFICAS -->
+    <div class="row g-4 mb-5">
+        <div class="col-lg-12">
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0"><i class="fas fa-chart-line"></i> Balance del Negocio (Ventas vs Gastos)</h5>
+                </div>
+                <div class="card-body">
+                    <canvas id="balanceChart" height="80"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row g-4 mb-5">
+        <div class="col-lg-6">
+            <div class="card shadow">
+                <div class="card-header bg-success text-white">
+                    <h5 class="mb-0"><i class="fas fa-arrow-up"></i> Ventas Diarias</h5>
+                </div>
+                <div class="card-body">
+                    <canvas id="salesChart" height="80"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-6">
+            <div class="card shadow">
+                <div class="card-header bg-danger text-white">
+                    <h5 class="mb-0"><i class="fas fa-arrow-down"></i> Gastos Diarios</h5>
+                </div>
+                <div class="card-body">
+                    <canvas id="expensesChart" height="80"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- SECCIÓN DE META Y PROGRESO -->
+    <div class="row g-4 mb-5">
+        <div class="col-lg-12">
+            <div class="card shadow border-warning">
+                <div class="card-header bg-warning text-dark">
+                    <h5 class="mb-0"><i class="fas fa-target"></i> Meta de Ventas</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row align-items-center">
+                        <div class="col-lg-8">
+                            <div class="progress" style="height: 30px;">
+                                <div id="goalBar" class="progress-bar progress-bar-striped progress-bar-animated bg-warning" 
+                                     role="progressbar" style="width: 0%;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">
+                                    <span id="goalPercent">0%</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-4 text-end mt-3 mt-lg-0">
+                            <p class="mb-0"><strong>Meta:</strong> $<span id="goalAmount">500,000</span></p>
+                            <p class="mb-0"><strong>Alcanzado:</strong> $<span id="goalReached">0</span></p>
+                            <p class="mb-0"><strong>Falta:</strong> $<span id="goalRemaining">500,000</span></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-6">
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0"><i class="fas fa-rocket"></i> Funciones Rápidas</h5>
+                </div>
+                <div class="card-body">
+                    <div class="list-group">
+                        <a href="/clients" class="list-group-item list-group-item-action">
+                            <i class="fas fa-user-plus"></i> Registrar Cliente
+                        </a>
+                        <a href="/suppliers" class="list-group-item list-group-item-action">
+                            <i class="fas fa-plus-circle"></i> Registrar Proveedor
+                        </a>
+                        <a href="/sales" class="list-group-item list-group-item-action">
+                            <i class="fas fa-receipt"></i> Registrar Venta
+                        </a>
+                        <a href="/invoices" class="list-group-item list-group-item-action">
+                            <i class="fas fa-file-invoice-dollar"></i> Ver Facturas
+                        </a>
+                        <a href="/expenses" class="list-group-item list-group-item-action">
+                            <i class="fas fa-money-bill"></i> Registrar Gasto
+                        </a>
+                        <a href="/purchases" class="list-group-item list-group-item-action">
+                            <i class="fas fa-shopping-bag"></i> Registrar Compra
+                        </a>
+                        <a href="/inventory" class="list-group-item list-group-item-action">
+                            <i class="fas fa-plus-square"></i> Agregar Inventario
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="card shadow">
+                <div class="card-header bg-success text-white">
+                    <h5 class="mb-0"><i class="fas fa-info-circle"></i> Información del Sistema</h5>
+                </div>
+                <div class="card-body">
+                    <p><strong>Nombre:</strong> Sistema de Gestión STOCKFLOW</p>
+                    <p><strong>Versión:</strong> 2.1 Web - Premium</p>
+                    <p><strong>Descripción:</strong> Sistema avanzado de gestión empresarial con análisis financiero.</p>
+                    <p><strong>Funcionalidades:</strong></p>
+                    <ul>
+                        <li>Gestión completa de clientes y proveedores</li>
+                        <li>Control de inventario en tiempo real</li>
+                        <li>Registro de ventas, compras y gastos</li>
+                        <li>Facturación automática</li>
+                        <li>Análisis gráfico de balances</li>
+                        <li>Meta de ventas y seguimiento</li>
+                        <li>Exportación de reportes</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Chart.js Library -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
+<script>
+    let balanceChartInstance = null;
+    let salesChartInstance = null;
+    let expensesChartInstance = null;
+
+    async function loadDashboardData() {
+        try {
+            const response = await axios.get('/api/dashboard-data');
+            const data = response.data;
+
+            // Actualizar totales
+            document.getElementById('totalSales').textContent = parseFloat(data.total_sales).toLocaleString('es-CO', {maximumFractionDigits: 0});
+            document.getElementById('totalExpenses').textContent = parseFloat(data.total_expenses).toLocaleString('es-CO', {maximumFractionDigits: 0});
+            document.getElementById('netBalance').textContent = parseFloat(data.net_balance).toLocaleString('es-CO', {maximumFractionDigits: 0});
+
+            // Cargar gráficas
+            loadChartsData(data.chart_data);
+            updateGoalProgress(data.total_sales);
+        } catch (error) {
+            console.error('Error cargando datos:', error);
+        }
+    }
+
+    function loadChartsData(chartData) {
+        const ctx1 = document.getElementById('balanceChart').getContext('2d');
+        const ctx2 = document.getElementById('salesChart').getContext('2d');
+        const ctx3 = document.getElementById('expensesChart').getContext('2d');
+
+        // Destruir gráficas anteriores si existen
+        if (balanceChartInstance) balanceChartInstance.destroy();
+        if (salesChartInstance) salesChartInstance.destroy();
+        if (expensesChartInstance) expensesChartInstance.destroy();
+
+        // Gráfica de Balance (Ventas vs Gastos)
+        balanceChartInstance = new Chart(ctx1, {
+            type: 'line',
+            data: {
+                labels: chartData.dates,
+                datasets: [
+                    {
+                        label: 'Ventas',
+                        data: chartData.sales,
+                        borderColor: '#48d1ff',
+                        backgroundColor: 'rgba(72, 209, 255, 0.18)',
+                        tension: 0.35,
+                        fill: true,
+                        borderWidth: 3,
+                        pointRadius: 4,
+                        pointBackgroundColor: '#48d1ff'
+                    },
+                    {
+                        label: 'Gastos',
+                        data: chartData.expenses,
+                        borderColor: '#b163ff',
+                        backgroundColor: 'rgba(177, 99, 255, 0.16)',
+                        tension: 0.35,
+                        fill: true,
+                        borderWidth: 3,
+                        pointRadius: 4,
+                        pointBackgroundColor: '#b163ff'
+                    },
+                    {
+                        label: 'Balance',
+                        data: chartData.balance,
+                        borderColor: '#86f0ff',
+                        backgroundColor: 'rgba(134, 240, 255, 0.14)',
+                        tension: 0.35,
+                        fill: true,
+                        borderWidth: 3,
+                        pointRadius: 4,
+                        pointBackgroundColor: '#86f0ff'
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: true,
+                plugins: {
+                    legend: {
+                        position: 'top',
+                        labels: {
+                            usePointStyle: true,
+                            padding: 15,
+                            color: '#f1f4f8'
+                        }
+                    },
+                    tooltip: {
+                        backgroundColor: 'rgba(7, 12, 18, 0.96)',
+                        titleColor: '#ffffff',
+                        bodyColor: '#d8d8e0'
+                    }
+                },
+                scales: {
+                    x: {
+                        ticks: {
+                            color: '#a7a7b5'
+                        },
+                        grid: {
+                            color: 'rgba(255, 255, 255, 0.06)'
+                        }
+                    },
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            color: '#a7a7b5',
+                            callback: function(value) {
+                                return '$' + value.toLocaleString();
+                            }
+                        },
+                        grid: {
+                            color: 'rgba(255, 255, 255, 0.06)'
+                        }
+                    }
+                }
+            }
+        });
+
+        // Gráfica de Ventas Diarias
+        salesChartInstance = new Chart(ctx2, {
+            type: 'line',
+            data: {
+                labels: chartData.dates,
+                datasets: [{
+                    label: 'Ventas Diarias',
+                    data: chartData.sales,
+                    borderColor: '#48d1ff',
+                    backgroundColor: 'rgba(72, 209, 255, 0.22)',
+                    tension: 0.35,
+                    fill: true,
+                    borderWidth: 3,
+                    pointRadius: 4,
+                    pointBackgroundColor: '#48d1ff'
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: true,
+                plugins: {
+                    legend: {
+                        display: true,
+                        labels: {
+                            color: '#f1f4f8'
+                        }
+                    },
+                    tooltip: {
+                        backgroundColor: 'rgba(7, 12, 18, 0.96)',
+                        titleColor: '#ffffff',
+                        bodyColor: '#d8d8e0'
+                    }
+                },
+                scales: {
+                    x: {
+                        ticks: {
+                            color: '#a7a7b5'
+                        },
+                        grid: {
+                            color: 'rgba(255, 255, 255, 0.06)'
+                        }
+                    },
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            color: '#a7a7b5',
+                            callback: function(value) {
+                                return '$' + value.toLocaleString();
+                            }
+                        },
+                        grid: {
+                            color: 'rgba(255, 255, 255, 0.06)'
+                        }
+                    }
+                }
+            }
+        });
+
+        // Gráfica de Gastos Diarios
+        expensesChartInstance = new Chart(ctx3, {
+            type: 'line',
+            data: {
+                labels: chartData.dates,
+                datasets: [{
+                    label: 'Gastos Diarios',
+                    data: chartData.expenses,
+                    borderColor: '#b163ff',
+                    backgroundColor: 'rgba(177, 99, 255, 0.18)',
+                    tension: 0.35,
+                    fill: true,
+                    borderWidth: 3,
+                    pointRadius: 4,
+                    pointBackgroundColor: '#b163ff'
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: true,
+                plugins: {
+                    legend: {
+                        display: true,
+                        labels: {
+                            color: '#f1f4f8'
+                        }
+                    },
+                    tooltip: {
+                        backgroundColor: 'rgba(7, 12, 18, 0.96)',
+                        titleColor: '#ffffff',
+                        bodyColor: '#d8d8e0'
+                    }
+                },
+                scales: {
+                    x: {
+                        ticks: {
+                            color: '#a7a7b5'
+                        },
+                        grid: {
+                            color: 'rgba(255, 255, 255, 0.06)'
+                        }
+                    },
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            color: '#a7a7b5',
+                            callback: function(value) {
+                                return '$' + value.toLocaleString();
+                            }
+                        },
+                        grid: {
+                            color: 'rgba(255, 255, 255, 0.06)'
+                        }
+                    }
+                }
+            }
+        });
+    }
+
+    function updateGoal() {
+        const goal = parseFloat(document.getElementById('monthlySalesGoal').value) || 500000;
+        localStorage.setItem('salesGoal', goal);
+        document.getElementById('goalAmount').textContent = goal.toLocaleString('es-CO', {maximumFractionDigits: 0});
+        
+        // Obtener sales actuales y recalcular
+        axios.get('/api/dashboard-data').then(response => {
+            updateGoalProgress(response.data.total_sales);
+        });
+    }
+
+    function updateGoalProgress(totalSales) {
+        const goal = parseFloat(localStorage.getItem('salesGoal')) || 500000;
+        const progress = Math.min((totalSales / goal) * 100, 100);
+        const remaining = Math.max(goal - totalSales, 0);
+
+        document.getElementById('goalBar').style.width = progress + '%';
+        document.getElementById('goalPercent').textContent = Math.round(progress) + '%';
+        document.getElementById('goalReached').textContent = Math.round(totalSales).toLocaleString('es-CO', {maximumFractionDigits: 0});
+        document.getElementById('goalRemaining').textContent = Math.round(remaining).toLocaleString('es-CO', {maximumFractionDigits: 0});
+    }
+
+    // Cargar datos al iniciar
+    document.addEventListener('DOMContentLoaded', () => {
+        loadDashboardData();
+        // Actualizar cada 30 segundos
+        setInterval(loadDashboardData, 30000);
+    });
+</script>
+{% endblock %}

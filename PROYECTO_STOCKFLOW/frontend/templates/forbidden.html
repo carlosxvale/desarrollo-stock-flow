@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+
+{% block title %}Acceso restringido - STOCKFLOW{% endblock %}
+
+{% block content %}
+<div class="container-lg py-5 text-center">
+    <p class="public-eyebrow justify-content-center"><span></span> Acceso restringido</p>
+    <h1 class="display-5 fw-bold">No tienes permiso para esta sección.</h1>
+    <p class="text-muted mt-3">Tu rol no permite consultar o modificar este recurso.</p>
+    <a class="btn btn-primary mt-3" href="{{ url_for('inventory') if session.get('role') == 'employee' else url_for('dashboard') }}">Volver a una sección permitida</a>
+</div>
+{% endblock %}

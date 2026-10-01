@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}STOCKFLOW - Sistema de Gestión{% endblock %}</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Rajdhani:wght@500;600;700&family=Space+Grotesk:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}?v=20261004">
+</head>
+<body class="cyber-shell">
+    <div class="background-canvas"></div>
+
+    <header class="navbar sticky-top">
+        <div class="container-fluid">
+            <a class="navbar-brand fw-bold" href="/">
+                STOCKFLOW
+            </a>
+            <button class="menu-toggle" id="menuToggle" type="button" aria-controls="sideMenu" aria-expanded="false" aria-label="Abrir menú">
+                <i class="fa-solid fa-bars" aria-hidden="true"></i>
+            </button>
+        </div>
+    </header>
+
+    <button class="menu-overlay" id="menuOverlay" type="button" aria-label="Cerrar menú" tabindex="-1"></button>
+    <aside class="side-menu" id="sideMenu" aria-label="Navegación principal" aria-hidden="true" inert>
+        <div class="side-menu-heading">
+            <span>MENÚ</span>
+            <button class="menu-close" id="menuClose" type="button" aria-label="Cerrar menú">
+                <i class="fa-solid fa-xmark" aria-hidden="true"></i>
+            </button>
+        </div>
+        <nav class="side-menu-links">
+            {% if is_logged_in() and session.get('role') == 'admin' %}
+                <a class="nav-link" href="{{ url_for('dashboard') }}">Panel</a>
+                <a class="nav-link" href="{{ url_for('clients') }}">Clientes</a>
+                <a class="nav-link" href="{{ url_for('suppliers') }}">Proveedores</a>
+                <a class="nav-link" href="{{ url_for('inventory') }}">Inventario</a>
+                <a class="nav-link" href="{{ url_for('sales') }}">Ventas</a>
+                <a class="nav-link" href="{{ url_for('invoices') }}">Facturas</a>
+                <a class="nav-link" href="{{ url_for('expenses') }}">Gastos</a>
+                <a class="nav-link" href="{{ url_for('purchases') }}">Compras</a>
+                <a class="nav-link" href="{{ url_for('history') }}">Historial</a>
+            {% elif is_logged_in() and session.get('role') == 'employee' %}
+                <a class="nav-link" href="{{ url_for('inventory') }}">Inventario</a>
+                <a class="nav-link" href="{{ url_for('sales') }}">Ventas</a>
+                <a class="nav-link" href="{{ url_for('purchases') }}">Compras</a>
+                <a class="nav-link" href="{{ url_for('invoices') }}">Facturas</a>
+                <a class="nav-link" href="{{ url_for('clients') }}">Clientes</a>
+                <a class="nav-link" href="{{ url_for('expenses') }}">Gastos</a>
+            {% elif not is_logged_in() %}
+                <a class="nav-link" href="{{ url_for('index') }}">Inicio</a>
+                <a class="nav-link" href="{{ url_for('index') }}#funciones">Funciones</a>
+                <a class="nav-link login-nav-link" href="{{ url_for('login') }}"><i class="fa-solid fa-right-to-bracket"></i> Iniciar sesión</a>
+            {% endif %}
+            {% if is_logged_in() %}
+                <a class="nav-link logout-link" href="{{ url_for('logout') }}"><i class="fa-solid fa-right-from-bracket"></i> Cerrar sesión</a>
+            {% endif %}
+        </nav>
+    </aside>
+
+    <main class="container-fluid py-4">
+        {% block content %}{% endblock %}
+    </main>
+
+    <footer class="footer-shell text-center py-3 mt-5">
+        <p>&copy; 2026 STOCKFLOW - Sistema de Gestión</p>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src="{{ url_for('static', filename='js/script.js') }}?v=20261005"></script>
+    {% block scripts %}{% endblock %}
+</body>
+</html>

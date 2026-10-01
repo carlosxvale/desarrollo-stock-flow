@@ -1,0 +1,254 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-md-8">
+        <h1 class="mb-0"> Gestión de Gastos</h1>
+    </div>
+    <div class="col-md-4 text-end">
+        <button class="btn btn-danger" type="button" onclick="openFormModal('expenseModal')">
+            <i class="fas fa-plus"></i> Nuevo Gasto
+        </button>
+    </div>
+</div>
+
+<!-- Búsqueda por fecha -->
+<div class="card mb-4 border-danger">
+    <div class="card-header bg-danger text-white">
+        <h6 class="mb-0"> Buscar Gastos por Fecha</h6>
+    </div>
+    <div class="card-body">
+        <div class="row">
+            <div class="col-md-3">
+                <label for="dateFrom" class="form-label">Desde</label>
+                <input type="date" id="dateFrom" class="form-control">
+            </div>
+            <div class="col-md-3">
+                <label for="dateTo" class="form-label">Hasta</label>
+                <input type="date" id="dateTo" class="form-control">
+            </div>
+            <div class="col-md-3 d-grid align-items-end">
+                <button class="btn btn-danger w-100" onclick="searchByDate()"> Buscar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Tabla de gastos -->
+<div class="table-responsive">
+    <table class="table table-hover table-striped" id="expensesTable">
+        <thead class="table-danger">
+            <tr>
+                <th>ID</th>
+                <th>Categoría</th>
+                <th>Descripción</th>
+                <th>Monto</th>
+                <th>Fecha</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody id="expensesBody">
+            <tr>
+                <td colspan="6" class="text-center py-4">
+                    <span class="spinner-border spinner-border-sm me-2"></span> Cargando...
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+<!-- Modal para nuevo gasto -->
+<div class="modal fade" id="expenseModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header bg-danger text-white">
+                <h5 class="modal-title"> Nuevo Gasto</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <form id="expenseForm">
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <label for="category" class="form-label">Categoría</label>
+                        <select id="category" class="form-control" required>
+                            <option value="">Seleccione categoría</option>
+                            <option value="Salarios">Salarios</option>
+                            <option value="Arriendo">Arriendo</option>
+                            <option value="Servicios">Servicios (Agua, Luz, Internet)</option>
+                            <option value="Suministros">Suministros</option>
+                            <option value="Transporte">Transporte</option>
+                            <option value="Marketing">Marketing</option>
+                            <option value="Mantenimiento">Mantenimiento</option>
+                            <option value="Otros">Otros</option>
+                        </select>
+                    </div>
+                    <div class="col-md-6">
+                        <label for="amount" class="form-label">Monto</label>
+                        <input type="number" id="amount" class="form-control" placeholder="Ej: 50000" min="0.01" step="0.01" required>
+                    </div>
+                </div>
+                <div class="row mt-3">
+                    <div class="col-md-6">
+                        <label for="expenseDate" class="form-label">Fecha</label>
+                        <input type="date" id="expenseDate" class="form-control">
+                    </div>
+                    <div class="col-md-6">
+                        <label for="responsible" class="form-label">Responsable</label>
+                        <input type="text" id="responsible" class="form-control" placeholder="Ej: Juan Pérez">
+                    </div>
+                </div>
+                <div class="row mt-3">
+                    <div class="col-12">
+                        <label for="description" class="form-label">Descripción</label>
+                        <textarea id="description" class="form-control" rows="3" placeholder="Detalles del gasto"></textarea>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <button type="submit" class="btn btn-danger">Registrar Gasto</button>
+            </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+<script>
+    const canDeleteRecords = {{ 'true' if session.get('role') == 'admin' else 'false' }};
+
+    // Cargar gastos
+    async function loadExpenses() {
+        try {
+            const response = await axios.get('/api/expenses');
+            const expenses = response.data;
+            
+            let html = '';
+            if (expenses.length === 0) {
+                html = '<tr><td colspan="6" class="text-center py-4">No hay gastos registrados</td></tr>';
+            } else {
+                expenses.forEach(expense => {
+                    html += `
+                        <tr>
+                            <td><strong>#${expense.id}</strong></td>
+                            <td>${expense.category || '-'}</td>
+                            <td>${expense.description || '-'}</td>
+                            <td class="fw-bold text-danger">$${parseFloat(expense.amount || 0).toLocaleString('es-CO')}</td>
+                            <td>${expense.date || '-'}</td>
+                            <td>
+                                ${canDeleteRecords ? `
+                                <button class="btn btn-sm btn-outline-danger" onclick="deleteExpense(${expense.id})">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                                ` : ''}
+                            </td>
+                        </tr>
+                    `;
+                });
+            }
+            document.getElementById('expensesBody').innerHTML = html;
+        } catch (error) {
+            console.error('Error:', error);
+        }
+    }
+
+    // Registrar gasto
+    function registerExpense(e) {
+        const category = document.getElementById('category').value;
+        const amount = parseFloat(document.getElementById('amount').value);
+        const date = document.getElementById('expenseDate').value;
+        const responsible = document.getElementById('responsible').value;
+        const description = document.getElementById('description').value;
+        
+        const data = {
+            category,
+            amount,
+            date: date || new Date().toISOString().split('T')[0],
+            responsible: responsible.trim(),
+            description: description.trim()
+        };
+
+        submitModalForm(e, {
+            modalId: 'expenseModal',
+            submit: () => axios.post('/api/expenses', data),
+            onSuccess: loadExpenses,
+            successMessage: 'Gasto registrado exitosamente',
+            errorMessage: 'Error al registrar gasto'
+        });
+    }
+
+    // Eliminar gasto
+    async function deleteExpense(id) {
+        if (confirm('¿Eliminar este gasto?')) {
+            try {
+                const response = await axios.delete(`/api/expenses/${id}`);
+                if (response.status === 200) {
+                    loadExpenses();
+                }
+            } catch (error) {
+                alert('Error al eliminar gasto');
+            }
+        }
+    }
+
+    // Buscar por fecha
+    async function searchByDate() {
+        const from = document.getElementById('dateFrom').value;
+        const to = document.getElementById('dateTo').value;
+        
+        if (!from || !to) {
+            alert('Seleccione ambas fechas');
+            return;
+        }
+        
+        try {
+            const response = await axios.get('/api/expenses');
+            const expenses = response.data;
+            const filtered = expenses.filter(e => e.date >= from && e.date <= to);
+            
+            let html = '';
+            if (filtered.length === 0) {
+                html = '<tr><td colspan="6" class="text-center py-4">No hay gastos en este rango de fechas</td></tr>';
+            } else {
+                filtered.forEach(expense => {
+                    html += `
+                        <tr>
+                            <td><strong>#${expense.id}</strong></td>
+                            <td>${expense.category || '-'}</td>
+                            <td>${expense.description || '-'}</td>
+                            <td class="fw-bold text-danger">$${parseFloat(expense.amount || 0).toLocaleString('es-CO')}</td>
+                            <td>${expense.date || '-'}</td>
+                            <td>
+                                ${canDeleteRecords ? `
+                                <button class="btn btn-sm btn-outline-danger" onclick="deleteExpense(${expense.id})">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                                ` : ''}
+                            </td>
+                        </tr>
+                    `;
+                });
+            }
+            document.getElementById('expensesBody').innerHTML = html;
+        } catch (error) {
+            alert('Error en la búsqueda');
+        }
+    }
+
+    // Resetear formulario
+    function resetForm() {
+        document.getElementById('category').value = '';
+        document.getElementById('amount').value = '';
+        document.getElementById('expenseDate').value = new Date().toISOString().split('T')[0];
+        document.getElementById('responsible').value = '';
+        document.getElementById('description').value = '';
+    }
+
+    // Cargar al iniciar
+    document.addEventListener('DOMContentLoaded', () => {
+        document.getElementById('expenseForm').addEventListener('submit', registerExpense);
+        document.getElementById('expenseDate').valueAsDate = new Date();
+        loadExpenses();
+    });
+</script>
+{% endblock %}

@@ -1,0 +1,443 @@
+{% extends "base.html" %}
+
+{% block title %}Facturas - STOCKFLOW{% endblock %}
+
+{% block content %}
+<div class="container-lg">
+    <div class="row mb-4">
+        <div class="col-md-6">
+            <h1 class="display-5 text-success fw-bold">
+                <i class="fas fa-file-invoice-dollar"></i> Gestión de Facturas
+            </h1>
+        </div>
+        <div class="col-md-6 text-end">
+            <button class="btn btn-success btn-lg" onclick="exportToCSV()">
+                <i class="fas fa-download"></i> Descargar Reporte
+            </button>
+        </div>
+    </div>
+
+    <div class="card shadow mb-4">
+        <div class="card-header bg-success text-white">
+            <h6 class="mb-0"><i class="fas fa-search"></i> Buscar Facturas por Rango de Fechas</h6>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-3">
+                    <label for="invoiceDateFrom" class="form-label">Desde</label>
+                    <input type="date" class="form-control" id="invoiceDateFrom">
+                </div>
+                <div class="col-md-3">
+                    <label for="invoiceDateTo" class="form-label">Hasta</label>
+                    <input type="date" class="form-control" id="invoiceDateTo">
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">&nbsp;</label>
+                    <button class="btn btn-outline-success w-100" onclick="searchInvoicesByDate()">
+                        <i class="fas fa-search"></i> Buscar
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card shadow">
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-striped table-hover" id="invoicesTable">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>Factura #</th>
+                            <th>Cliente</th>
+                            <th>Producto</th>
+                            <th>Cantidad</th>
+                            <th>Subtotal</th>
+                            <th>IVA (19%)</th>
+                            <th>Total</th>
+                            <th>Fecha</th>
+                            <th>Estado</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody id="invoicesTableBody">
+                        <tr>
+                            <td colspan="10" class="text-center text-muted">Cargando...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal para ver detalles de factura -->
+<div class="modal fade" id="invoiceDetailModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header bg-success text-white">
+                <h5 class="modal-title"><i class="fas fa-file-invoice-dollar"></i> Detalle de Factura</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div id="invoiceDetailContent"></div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                <button type="button" class="btn btn-warning" onclick="downloadInvoicePDF()">
+                    <i class="fas fa-file-pdf"></i> Descargar PDF
+                </button>
+                <button type="button" class="btn btn-info" onclick="downloadInvoiceImage()">
+                    <i class="fas fa-image"></i> Descargar PNG
+                </button>
+                <button type="button" class="btn btn-primary" onclick="printInvoice()">
+                    <i class="fas fa-print"></i> Imprimir
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="invoicePermissions" data-can-delete="{{ 'true' if session.get('role') == 'admin' else 'false' }}" hidden></div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    const canDeleteRecords = document.getElementById('invoicePermissions').dataset.canDelete === 'true';
+
+    // Cargar todas las facturas
+    async function loadInvoices() {
+        try {
+            const response = await axios.get('/api/invoices');
+            const tableBody = document.getElementById('invoicesTableBody');
+            
+            if (response.data.length === 0) {
+                tableBody.innerHTML = '<tr><td colspan="10" class="text-center text-muted">No hay facturas registradas</td></tr>';
+                return;
+            }
+            
+            tableBody.innerHTML = response.data.map(invoice => `
+                <tr>
+                    <td><strong>#${invoice.invoice_id}</strong></td>
+                    <td>${invoice.client_name}</td>
+                    <td>${invoice.product_name || 'Producto ' + invoice.product_id}</td>
+                    <td>${invoice.quantity}</td>
+                    <td>$${parseFloat(invoice.subtotal).toLocaleString('es-CO')}</td>
+                    <td>$${parseFloat(invoice.tax).toLocaleString('es-CO')}</td>
+                    <td><strong>$${parseFloat(invoice.total).toLocaleString('es-CO')}</strong></td>
+                    <td>${invoice.date}</td>
+                    <td>
+                        <span class="badge bg-success">${invoice.status}</span>
+                    </td>
+                    <td>
+                        <button class="btn btn-sm btn-info" onclick="viewInvoice(${invoice.invoice_id})">
+                            <i class="fas fa-eye"></i> Ver
+                        </button>
+                        ${canDeleteRecords ? `
+                        <button class="btn btn-sm btn-danger" onclick="deleteInvoice(${invoice.invoice_id})">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                        ` : ''}
+                    </td>
+                </tr>
+            `).join('');
+        } catch (error) {
+            console.error('Error cargando facturas:', error);
+        }
+    }
+
+    // Ver detalles de factura
+    async function viewInvoice(invoiceId) {
+        try {
+            const response = await axios.get(`/api/invoices/${invoiceId}`);
+            const invoice = response.data;
+            window.currentInvoice = invoice; // Guardar para descargas
+            
+            const detailHTML = `
+                <div class="invoice-detail" id="invoicePrint">
+                    <div class="text-center mb-4">
+                        <h3 class="text-success">STOCKFLOW</h3>
+                        <p class="text-muted">NIT: 800.123.456-7</p>
+                        <p class="text-muted">Carrera 5 #10-50, Bogotá D.C.</p>
+                        <p class="text-muted">Tel: (1) 234-5678</p>
+                    </div>
+                    
+                    <div class="row mb-4">
+                        <div class="col-md-6">
+                            <h6 class="text-muted">FACTURA</h6>
+                            <h4 class="text-success">#${invoice.invoice_id}</h4>
+                            <p class="text-muted"><small>Venta #${invoice.sale_id}</small></p>
+                        </div>
+                        <div class="col-md-6 text-end">
+                            <h6 class="text-muted">FECHA</h6>
+                            <h5>${invoice.date}</h5>
+                            <p class="text-muted"><small>${invoice.time}</small></p>
+                        </div>
+                    </div>
+                    
+                    <hr>
+                    
+                    <div class="row mb-4">
+                        <div class="col-md-6">
+                            <h6 class="text-muted">CLIENTE</h6>
+                            <p><strong>${invoice.client_name}</strong></p>
+                            <p><small>ID: ${invoice.client_id}</small></p>
+                        </div>
+                        <div class="col-md-6 text-end">
+                            <h6 class="text-muted">MÉTODO DE PAGO</h6>
+                            <p><strong>${invoice.payment_method}</strong></p>
+                        </div>
+                    </div>
+                    
+                    <hr>
+                    
+                    <h6 class="text-muted mb-3">DETALLES</h6>
+                    <table class="table table-bordered">
+                        <thead class="table-success">
+                            <tr>
+                                <th>PRODUCTO</th>
+                                <th class="text-center">CANTIDAD</th>
+                                <th class="text-end">PRECIO UNIT.</th>
+                                <th class="text-end">SUBTOTAL</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>${invoice.product_name}</strong></td>
+                                <td class="text-center">${invoice.quantity}</td>
+                                <td class="text-end">$${parseFloat(invoice.unit_price).toLocaleString('es-CO')}</td>
+                                <td class="text-end">$${parseFloat(invoice.subtotal).toLocaleString('es-CO')}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    
+                    <hr>
+                    
+                    <div class="row">
+                        <div class="col-md-6"></div>
+                        <div class="col-md-6">
+                            <table class="table table-sm">
+                                <tr class="border-top">
+                                    <td><strong>SUBTOTAL:</strong></td>
+                                    <td class="text-end"><strong>$${parseFloat(invoice.subtotal).toLocaleString('es-CO')}</strong></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>IVA (19%):</strong></td>
+                                    <td class="text-end"><strong>$${parseFloat(invoice.tax).toLocaleString('es-CO')}</strong></td>
+                                </tr>
+                                <tr class="table-success border-top border-bottom">
+                                    <td><h5 class="mb-0">TOTAL:</h5></td>
+                                    <td class="text-end"><h5 class="mb-0">$${parseFloat(invoice.total).toLocaleString('es-CO')}</h5></td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                    
+                    <hr class="my-4">
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            <p class="text-muted"><small>Estado: <span class="badge bg-success">${invoice.status}</span></small></p>
+                        </div>
+                        <div class="col-md-6 text-end">
+                            <p class="text-muted"><small>Generado: ${new Date().toLocaleString('es-CO')}</small></p>
+                        </div>
+                    </div>
+                    
+                    <div class="text-center mt-4 text-muted">
+                        <p><small>Gracias por su compra</small></p>
+                        <p><small>www.fenixsalchipapas.com | Tel: (1) 234-5678</small></p>
+                    </div>
+                </div>
+            `;
+            
+            document.getElementById('invoiceDetailContent').innerHTML = detailHTML;
+            openFormModal('invoiceDetailModal');
+        } catch (error) {
+            alert('Error al cargar factura');
+        }
+    }
+
+    // Buscar por fecha
+    async function searchInvoicesByDate() {
+        const date1 = document.getElementById('invoiceDateFrom').value;
+        const date2 = document.getElementById('invoiceDateTo').value;
+        
+        if (!date1 || !date2) {
+            alert('Por favor selecciona ambas fechas');
+            return;
+        }
+        
+        try {
+            const response = await axios.get('/api/invoices');
+            const invoices = response.data;
+            const filtered = invoices.filter(inv => inv.date >= date1 && inv.date <= date2);
+            
+            const tableBody = document.getElementById('invoicesTableBody');
+            
+            if (filtered.length === 0) {
+                tableBody.innerHTML = '<tr><td colspan="10" class="text-center text-muted">No hay facturas en ese rango de fechas</td></tr>';
+                return;
+            }
+            
+            tableBody.innerHTML = filtered.map(invoice => `
+                <tr>
+                    <td><strong>#${invoice.invoice_id}</strong></td>
+                    <td>${invoice.client_name}</td>
+                    <td>${invoice.product_name || 'Producto ' + invoice.product_id}</td>
+                    <td>${invoice.quantity}</td>
+                    <td>$${parseFloat(invoice.subtotal).toLocaleString('es-CO')}</td>
+                    <td>$${parseFloat(invoice.tax).toLocaleString('es-CO')}</td>
+                    <td><strong>$${parseFloat(invoice.total).toLocaleString('es-CO')}</strong></td>
+                    <td>${invoice.date}</td>
+                    <td>
+                        <span class="badge bg-success">${invoice.status}</span>
+                    </td>
+                    <td>
+                        <button class="btn btn-sm btn-info" onclick="viewInvoice(${invoice.invoice_id})">
+                            <i class="fas fa-eye"></i> Ver
+                        </button>
+                        ${canDeleteRecords ? `
+                        <button class="btn btn-sm btn-danger" onclick="deleteInvoice(${invoice.invoice_id})">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                        ` : ''}
+                    </td>
+                </tr>
+            `).join('');
+        } catch (error) {
+            alert('Error en la búsqueda');
+        }
+    }
+
+    // Eliminar factura
+    async function deleteInvoice(invoiceId) {
+        if (confirm('¿Estás seguro que deseas eliminar esta factura?')) {
+            try {
+                await axios.delete(`/api/invoices/${invoiceId}`);
+                alert('Factura eliminada');
+                loadInvoices();
+            } catch (error) {
+                alert('Error al eliminar factura');
+            }
+        }
+    }
+
+    // Imprimir factura
+    function printInvoice() {
+        const invoiceContent = document.getElementById('invoicePrint').innerHTML;
+        const printWindow = window.open('', '', 'width=800,height=600');
+        printWindow.document.write(`
+            <!DOCTYPE html>
+            <html>
+            <head>
+                <title>Factura #${window.currentInvoice.invoice_id}</title>
+                <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+                <style>
+                    body { padding: 20px; font-size: 12px; }
+                    @media print { body { padding: 0; } }
+                </style>
+            </head>
+            <body>
+                ${invoiceContent}
+            </body>
+            </html>
+        `);
+        printWindow.document.close();
+        printWindow.print();
+    }
+
+    // Descargar como PDF
+    function downloadInvoicePDF() {
+        const invoice = window.currentInvoice;
+        const element = document.getElementById('invoicePrint');
+        
+        // Cargar librería jsPDF primero
+        const jsPDF = document.createElement('script');
+        jsPDF.src = 'https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js';
+        jsPDF.onload = function() {
+            // Cargar html2canvas
+            const html2canvas = document.createElement('script');
+            html2canvas.src = 'https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js';
+            html2canvas.onload = function() {
+                // Convertir elemento a canvas y luego a PDF
+                window.html2canvas(element, {
+                    scale: 2,
+                    backgroundColor: '#ffffff',
+                    useCORS: true
+                }).then(canvas => {
+                    const imgData = canvas.toDataURL('image/jpeg', 0.98);
+                    const { jsPDF: jsPDFClass } = window.jspdf;
+                    const pdf = new jsPDFClass({
+                        orientation: 'portrait',
+                        unit: 'mm',
+                        format: 'a4'
+                    });
+                    
+                    const imgWidth = 190; // Ancho de la página A4 menos márgenes
+                    const imgHeight = (canvas.height * imgWidth) / canvas.width;
+                    pdf.addImage(imgData, 'JPEG', 10, 10, imgWidth, imgHeight);
+                    pdf.save(`factura_${invoice.invoice_id}.pdf`);
+                });
+            };
+            document.head.appendChild(html2canvas);
+        };
+        document.head.appendChild(jsPDF);
+    }
+
+    // Descargar como imagen PNG
+    function downloadInvoiceImage() {
+        const invoice = window.currentInvoice;
+        const element = document.getElementById('invoicePrint');
+        
+        // Cargar html2canvas
+        const html2canvas = document.createElement('script');
+        html2canvas.src = 'https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js';
+        html2canvas.onload = function() {
+            window.html2canvas(element, {
+                scale: 2,
+                backgroundColor: '#ffffff',
+                useCORS: true,
+                allowTaint: true
+            }).then(canvas => {
+                const link = document.createElement('a');
+                link.href = canvas.toDataURL('image/png');
+                link.download = `factura_${invoice.invoice_id}.png`;
+                link.click();
+            }).catch(error => {
+                console.error('Error al generar imagen PNG:', error);
+                alert('Error al descargar imagen PNG');
+            });
+        };
+        document.head.appendChild(html2canvas);
+    }
+
+    // Exportar a CSV
+    async function exportToCSV() {
+        try {
+            const response = await axios.get('/api/invoices');
+            const invoices = response.data;
+            
+            if (invoices.length === 0) {
+                alert('No hay facturas para exportar');
+                return;
+            }
+            
+            let csv = 'Factura,Venta,Cliente,Producto,Cantidad,Subtotal,IVA,Total,Fecha,Hora,Método Pago,Estado\n';
+            
+            invoices.forEach(invoice => {
+                csv += `${invoice.invoice_id},${invoice.sale_id},"${invoice.client_name}","${invoice.product_name}",${invoice.quantity},"${parseFloat(invoice.subtotal).toLocaleString()}","${parseFloat(invoice.tax).toLocaleString()}","${parseFloat(invoice.total).toLocaleString()}",${invoice.date},${invoice.time},${invoice.payment_method},${invoice.status}\n`;
+            });
+            
+            const link = document.createElement('a');
+            link.href = 'data:text/csv;charset=utf-8,' + encodeURI(csv);
+            link.download = `facturas_${new Date().toISOString().split('T')[0]}.csv`;
+            link.click();
+        } catch (error) {
+            alert('Error al exportar facturas');
+        }
+    }
+
+    // Cargar al iniciar
+    document.addEventListener('DOMContentLoaded', loadInvoices);
+</script>
+{% endblock %}

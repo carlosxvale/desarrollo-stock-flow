@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Iniciar sesión - STOCKFLOW</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Rajdhani:wght@500;600;700&family=Space+Grotesk:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}?v=20261004">
+</head>
+<body class="cyber-shell">
+    <div class="background-canvas"></div>
+    <a class="login-home-link" href="{{ url_for('index') }}"><i class="fa-solid fa-arrow-left"></i> Volver al inicio</a>
+    <div class="login-shell">
+        <div class="login-panel">
+            <div class="login-brand"><i class="fas fa-shield-alt"></i> STOCKFLOW ACCESS</div>
+            <h1>Inicia sesión.</h1>
+            <p>Elige tu tipo de acceso e ingresa tus credenciales.</p>
+
+            {% if error %}
+            <div class="login-alert">{{ error }}</div>
+            {% endif %}
+
+            <form action="{{ url_for('login', next=request.args.get('next')) if request.args.get('next') else url_for('login') }}" method="post" class="login-form" autocomplete="off">
+                <input type="hidden" name="tab_token" id="tabToken" value="{{ tab_token }}">
+                <fieldset class="role-selector">
+                    <legend>Tipo de usuario</legend>
+                    <label class="role-option">
+                        <input type="radio" name="role" value="admin" {% if selected_role == 'admin' %}checked{% endif %}>
+                        <span><i class="fa-solid fa-shield-halved"></i> Administrador</span>
+                    </label>
+                    <label class="role-option">
+                        <input type="radio" name="role" value="employee" {% if selected_role == 'employee' %}checked{% endif %}>
+                        <span><i class="fa-solid fa-user"></i> Empleado</span>
+                    </label>
+                </fieldset>
+                <div class="mb-3">
+                    <label for="username" class="form-label">Usuario</label>
+                    <input id="username" name="username" type="text" class="form-control" placeholder="admin" required autofocus>
+                </div>
+
+                <div class="mb-3">
+                    <label for="password" class="form-label">Contraseña</label>
+                    <input id="password" name="password" type="password" class="form-control" placeholder="••••••••" required>
+                </div>
+
+                <button type="submit" class="btn btn-primary login-btn">Ingresar</button>
+            </form>
+
+            <div class="separator"></div>
+            <p class="login-note">Cada tipo de usuario tiene permisos distintos dentro del sistema.</p>
+        </div>
+    </div>
+    <script>
+        const tabTokenField = document.getElementById('tabToken');
+        const storedTabToken = sessionStorage.getItem('stockflow_tab_token');
+        if (storedTabToken) {
+            tabTokenField.value = storedTabToken;
+        } else {
+            sessionStorage.setItem('stockflow_tab_token', tabTokenField.value);
+        }
+    </script>
+</body>
+</html>
